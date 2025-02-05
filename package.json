@@ -5,7 +5,8 @@
   "scripts": {
     "start": "bun run index.ts",
     "dev": "bun --watch index.ts",
-    "build": "bun build index.ts --outdir dist"
+    "build": "bun build index.ts --outdir dist",
+    "format": "biome check --write ."
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -14,6 +15,7 @@
     "blessed": "^0.1.81"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/blessed": "^0.1.25",
     "@types/bun": "latest"
   }
