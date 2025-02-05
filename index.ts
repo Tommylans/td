@@ -120,11 +120,24 @@ async function refreshList(list: blessed.Widgets.ListElement) {
   if (todos.length === 0) {
     list.setItems(['No changed TODOs found.']);
   } else {
-    // Use blessed markup for colored output
-    const items = todos.map(
-      todo =>
-        `{green-fg}${todo.file}{/green-fg}:{yellow-fg}${todo.line}{/yellow-fg} - {blue-fg}${todo.content}{/blue-fg}`
-    );
+    // Use blessed markup for colored output with different colors for TODO and FIXME
+    const items = todos.map(todo => {
+      const content = todo.content;
+      let coloredContent = `{blue-fg}${content}{/blue-fg}`;
+      
+      // Replace TODO: with yellow highlight
+      if (content.includes('TODO:')) {
+        coloredContent = coloredContent.replace('TODO:', '{yellow-fg}TODO:{/yellow-fg}');
+      }
+      // Replace FIXME: with red highlight
+      if (content.includes('FIXME:')) {
+        coloredContent = coloredContent.replace('FIXME:', '{red-fg}FIXME:{/red-fg}');
+      }
+
+      const filename = todo.file.split('/').pop();
+
+      return `{green-fg}${filename}{/green-fg}:{yellow-fg}${todo.line}{/yellow-fg} - ${coloredContent}`;
+    });
     list.setItems(items);
   }
   list.screen.render();
@@ -139,12 +152,12 @@ async function refreshList(list: blessed.Widgets.ListElement) {
 function createTUI() {
   const screen = blessed.screen({
     smartCSR: true,
-    title: 'Changed TODOs',
+    title: 'TODOs',
   });
 
   const list = blessed.list({
     parent: screen,
-    label: ' Changed TODOs ',
+    label: ' TODOs ',
     width: '100%',
     height: '100%',
     keys: true,
