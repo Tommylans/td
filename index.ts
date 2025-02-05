@@ -11,6 +11,12 @@ interface TodoEntry {
   content: string
 }
 
+// Extended interface for blessed list to include the selected property
+interface ExtendedList extends blessed.Widgets.ListElement {
+  // The selected property is a internal property of the list element but it works like a charm
+  selected: number
+}
+
 const prefixes = ['TODO:', 'FIXME:']
 
 /**
@@ -116,6 +122,7 @@ function openFileAtLine(file: string, line: number) {
  * Refreshes the blessed list with the latest changed TODO entries.
  */
 async function refreshList(list: blessed.Widgets.ListElement) {
+  const currentSelection = (list as ExtendedList).selected
   list.setItems(['Loading todos...'])
   list.screen.render()
   const todos = await getChangedTodos()
@@ -141,6 +148,10 @@ async function refreshList(list: blessed.Widgets.ListElement) {
       return `{green-fg}${filename}{/green-fg}:{yellow-fg}${todo.line}{/yellow-fg} - ${coloredContent}`
     })
     list.setItems(items)
+    // Restore the previous selection if it's still within bounds
+    if (currentSelection !== undefined && currentSelection < items.length) {
+      list.select(currentSelection)
+    }
   }
   list.screen.render()
 }
