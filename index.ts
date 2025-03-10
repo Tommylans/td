@@ -110,7 +110,7 @@ async function getChangedTodos(): Promise<TodoEntry[]> {
  * Modify the command if you use a different editor.
  */
 function openFileAtLine(file: string, line: number) {
-  const command = `cursor -g ${file}:${line}`
+  const command = `cursor -g "${file}:${line}"`
   exec(command, (err) => {
     if (err) {
       console.error('Error opening file:', err)
